@@ -9,12 +9,18 @@ desc:{
     type:String,
     required:true,
 },
+type:String,
+
 image:{
     url:{
         type:String,
         default:"/images/default.jpeg",
         set:(v)=>v===""?"/images/default.jpeg":v,
     }
+},
+searchCount: {
+  type: Number,
+  default: 0
 }
 });
 

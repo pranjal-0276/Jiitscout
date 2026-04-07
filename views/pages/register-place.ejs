@@ -1,0 +1,54 @@
+<% layout("./layouts/stuff.ejs"); %>
+
+<div class="row">
+  <div class="col-8 offset-2">
+    <h1 class="mt-3">Register New Place</h1>
+    <form method="POST" action="/jiitscout/admin/add" class="needs-validation" novalidate>
+      
+      <!-- Name -->
+      <div class="mb-3">
+        <label for="name" class="form-label">Place Name</label>
+        <input type="text" class="form-control" id="name" name="name" placeholder="Enter place name" required>
+        <div class="invalid-feedback">Please enter the place name.</div>
+      </div>
+
+      <!-- Description -->
+      <div class="mb-3">
+        <label for="desc" class="form-label">Description</label>
+        <textarea class="form-control" id="desc" name="desc" placeholder="Enter description" required></textarea>
+        <div class="invalid-feedback">Please enter a description.</div>
+      </div>
+
+      <!-- Type -->
+      <div class="mb-3">
+        <label for="type" class="form-label">Type</label>
+        <input type="text" class="form-control" id="type" name="type" placeholder="e.g., Library, Cafeteria">
+      </div>
+
+      <!-- Image URL -->
+      <div class="mb-3">
+        <label for="imageUrl" class="form-label">Image URL</label>
+        <input type="text" class="form-control" id="imageUrl" name="imageUrl" placeholder="Enter image URL">
+      </div>
+
+      <button type="submit" class="btn search-btn">Register Place</button>
+    </form>
+  </div>
+</div>
+
+<script>
+  // Bootstrap form validation
+  (function () {
+    'use strict'
+    var forms = document.querySelectorAll('.needs-validation')
+    Array.prototype.slice.call(forms).forEach(function (form) {
+      form.addEventListener('submit', function (event) {
+        if (!form.checkValidity()) {
+          event.preventDefault()
+          event.stopPropagation()
+        }
+        form.classList.add('was-validated')
+      }, false)
+    })
+  })()
+</script>

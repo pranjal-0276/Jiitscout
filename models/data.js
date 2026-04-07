@@ -1,28 +1,39 @@
 let initData = [
   {
     name: "ABB1",
-    desc: "Core academic block for regular classes",
+    type: "Academic Block",
+    desc: "Core academic block for lectures and labs"
   },
   {
-    name: "ABB1",
-    desc: "Core academic block for regular classes",
-
+    name: "ABB2",
+    type: "Academic Block",
+    desc: "Second academic block with classrooms and faculty cabins"
   },
   {
-    name: "ABB1",
-    desc: "Core academic block for regular classes",
-  
+    name: "Library",
+    type: "Study Area",
+    desc: "Central library with books, journals and study space"
   },
   {
-    name:"ABB1",
-    desc:"Core academic block for regular classes",
- 
+    name: "Mess",
+    type: "Food",
+    desc: "Main dining area for students"
   },
   {
-    name:"ABB1",
-    desc:"Core academic block for regular classes",
- 
+    name: "Hostel",
+    type: "Residence",
+    desc: "Student accommodation blocks"
   },
+  {
+    name: "Cafe",
+    type: "Food",
+    desc: "Quick snacks and beverages spot"
+  },
+  {
+    name: "Sports Complex",
+    type: "Activity",
+    desc: "Area for indoor and outdoor sports"
+  }
 ];
 
-module.exports={data:initData};
+module.exports = { data: initData };

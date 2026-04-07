@@ -1,25 +1,91 @@
 body {
   font-family: "Plus Jakarta Sans", sans-serif;
-  font-optical-sizing: auto;
-  font-style: normal;
+  background-color: #e8f5e9;
+}
 
+.main-content {
+  padding: 2rem;
 }
-.main-content{
-    padding:2rem;
-}
+
+/* NAVBAR */
 .navbar {
-  height: 5rem;
+  background-color: #2e7d32 !important;
+  padding: 1rem 1.5rem;
+  z-index: 1000;
 }
+
 .nav-link {
-  color: #fe424d;
+  color: #ffffff !important;
+  font-weight: 500;
+  font-size:1.2rem;
 }
-.card{
-  display:flex;
-  margin-right:2rem;
-  margin-top:2rem;
+
+.navbar-brand {
+  color: #ffffff !important;
+  font-size: 2.5rem;
 }
-.card-img-top{
-  width:100%;
-  object-fit:cover;
-  border-radius:1rem;
+
+.navbar-brand:hover {
+  color: #c8e6c9 !important;
+}
+
+.navbar-collapse {
+  background-color: #2e7d32;
+  padding: 1rem;
+}
+
+/* CARDS */
+.card {
+  border-radius: 1rem;
+  border: none;
+  background-color: #ffffff;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  height: 100%;
+  transition: all 0.3s ease;
+}
+
+/* IMAGE */
+.card-img-top {
+  height: 200px;
+  object-fit: cover;
+}
+
+/* TEXT CONTROL */
+.card-body {
+  display: flex;
+  flex-direction: column;
+}
+
+.card-text {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+}
+
+/* HOVER EFFECT */
+.card:hover {
+  transform: scale(1.03);
+  box-shadow: 
+    0 0 10px rgba(46, 125, 50, 0.6),
+    0 0 20px rgba(46, 125, 50, 0.4);
+}
+
+/* SEARCH BUTTON */
+.search-btn {
+  background-color: #2e7d32;
+  color: white;
+  border: none;
+  font-size:1.2rem;
+}
+
+.search-btn:hover {
+  background-color: #1b5e20;
+  color: white;
+}
+/* Dark green background for active/focus dropdown items */
+.dropdown-menu .dropdown-item:active,
+.dropdown-menu .dropdown-item:focus {
+    background-color: #2e7d32 !important; /* dark green */
+    color: white !important; /* text color white */
 }

@@ -1,0 +1,45 @@
+<% layout("./layouts/stuff.ejs"); %>
+
+<div class="container mt-4 outerDetails">
+
+  <div class="card mx-auto" style="max-width: 600px;">
+
+    <img src="<%= building.image.url %>" class="card-img-top" alt="image" />
+
+    <div class="card-body">
+
+      <h2 class="card-title"><%= building.name %></h2>
+
+      <p class="card-text mt-3">
+        <%= building.desc %>
+      </p>
+
+      <p><strong>Type:</strong> <%= building.type %></p>
+
+      <a href="/jiitscout/stuff" class="btn search-btn mt-3">
+        ← Back
+      </a>
+
+    </div> <!-- end card-body -->
+
+  </div> <!-- end card -->
+
+  <!-- Admin Buttons OUTSIDE CARD, horizontal line -->
+  <div class="AdminSetting mt-5 d-flex justify-content-center gap-3" >
+    <form method="get" action="/jiitscout/admin/<%= building._id%>/update">
+      <button class="btn search-btn">Update</button>
+    </form>
+    <form method="post" action="/jiitscout/admin/<%=building._id%>?_method=delete">
+      <button class="btn search-btn">Delete</button>
+    </form>
+    
+  </div>
+
+</div>
+
+<style>
+  .AdminSetting .btn {
+    width: 120px; /* optional: make both buttons same size */
+  }
+  
+</style>

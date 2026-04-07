@@ -85,6 +85,7 @@ body::before {
   display: flex;
   justify-content: center;
   margin-top: 1.2rem; 
+  background: transparent;
 }
 
 .below-btn-img img {
@@ -111,3 +112,11 @@ a:visited {
 
   animation: glowPulse 2s ease-in-out infinite;
 }
+.below-btn-img img {
+  max-width: 180px;
+  width: 100%;
+  height: auto;
+  
+  filter: drop-shadow(0 0 8px white) drop-shadow(0 0 15px green);
+}
+
