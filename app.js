@@ -7,6 +7,9 @@ const app=express();
 const ejsMate=require("ejs-mate");
 const Building=require("./models/schema");
 const methodOverride=require("method-override");
+const { getNavigationSteps } = require('./utils/pathfinder');
+const graph = require('./data/campusGraph');
+
 
 app.use(methodOverride("_method"));
 main()
@@ -27,6 +30,15 @@ app.use(express.static(path.join(__dirname,"./public")));
 app.engine("ejs",ejsMate);
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json())
+app.get('/navigate', (req, res) => {
+  const { start, goal } = req.query;
+  const locations = Object.keys(graph);
+  if (!start || !goal)
+    return res.render('navigation', { steps: null, start: '', goal: '', locations });
+  const steps = getNavigationSteps(start, goal);
+  res.render('navigation', { steps, start, goal, locations });
+});
+
 
 app.listen(PORT,()=>{
     console.log(`PORT ${PORT} is listening`);

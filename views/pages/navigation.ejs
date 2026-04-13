@@ -1,0 +1,430 @@
+<%- include('partials/header') %>
+
+<div class="nav-page">
+
+  <!-- HERO SEARCH -->
+  <div class="nav-hero">
+    <div class="nav-hero-glow"></div>
+    <div class="nav-hero-content">
+      <div class="nav-hero-icon">
+        <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="24" cy="24" r="22" fill="url(#iconGrad)" opacity="0.15"/>
+          <path d="M24 4C16.268 4 10 10.268 10 18C10 28.5 24 44 24 44C24 44 38 28.5 38 18C38 10.268 31.732 4 24 4Z" fill="url(#iconGrad)"/>
+          <circle cx="24" cy="18" r="6" fill="white" opacity="0.9"/>
+          <path d="M16 38L24 44L32 38" stroke="url(#iconGrad)" stroke-width="2" stroke-linecap="round" opacity="0.5"/>
+          <defs>
+            <linearGradient id="iconGrad" x1="10" y1="4" x2="38" y2="44" gradientUnits="userSpaceOnUse">
+              <stop stop-color="#a78bfa"/>
+              <stop offset="1" stop-color="#38bdf8"/>
+            </linearGradient>
+          </defs>
+        </svg>
+      </div>
+      <h1 class="nav-hero-title">Campus Navigator</h1>
+      <p class="nav-hero-sub">Find your way around JIIT with step-by-step visual directions</p>
+
+      <form class="nav-search-form" action="/navigate" method="GET">
+        <div class="nav-inputs">
+
+          <div class="nav-input-wrap">
+            <span class="nav-input-icon">
+              <svg viewBox="0 0 20 20" fill="currentColor"><circle cx="10" cy="10" r="4"/><path d="M10 2v2M10 16v2M2 10h2M16 10h2"/></svg>
+            </span>
+            <label class="nav-input-label">From</label>
+            <select name="start" required class="nav-select">
+              <option value="">Select start location</option>
+              <% locations.forEach(function(loc) { %>
+                <option value="<%= loc %>" <%= loc === start ? 'selected' : '' %>><%= loc %></option>
+              <% }); %>
+            </select>
+          </div>
+
+          <button type="button" class="nav-swap-btn" onclick="swapLocations()" title="Swap">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <path d="M7 16V4m0 0L3 8m4-4l4 4"/><path d="M17 8v12m0 0l4-4m-4 4l-4-4"/>
+            </svg>
+          </button>
+
+          <div class="nav-input-wrap">
+            <span class="nav-input-icon dest">
+              <svg viewBox="0 0 20 20" fill="currentColor"><path d="M10 2C6.686 2 4 4.686 4 8c0 5.25 6 10 6 10s6-4.75 6-10c0-3.314-2.686-6-6-6zm0 8.5A2.5 2.5 0 1110 5.5 2.5 2.5 0 0110 10.5z"/></svg>
+            </span>
+            <label class="nav-input-label">To</label>
+            <select name="goal" required class="nav-select">
+              <option value="">Select destination</option>
+              <% locations.forEach(function(loc) { %>
+                <option value="<%= loc %>" <%= loc === goal ? 'selected' : '' %>><%= loc %></option>
+              <% }); %>
+            </select>
+          </div>
+
+        </div>
+
+        <button type="submit" class="nav-find-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+            <path d="M3 12h18M13 6l6 6-6 6"/>
+          </svg>
+          Find Route
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- RESULTS -->
+  <% if (steps && steps.length > 0) { %>
+  <div class="nav-results" id="navResults" data-total="<%= steps.length %>">
+
+    <!-- Route summary -->
+    <div class="nav-route-bar">
+      <div class="nav-route-info">
+        <span class="nav-route-from"><%= start %></span>
+        <span class="nav-route-arrow">
+          <svg viewBox="0 0 40 16" fill="none">
+            <path d="M0 8h36M30 2l6 6-6 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </span>
+        <span class="nav-route-to"><%= goal %></span>
+      </div>
+      <div class="nav-route-meta">
+        <span class="nav-badge"><%= steps.length %> stops</span>
+        <span class="nav-badge"><%= steps.length - 1 %> turns</span>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="nav-tabs">
+      <button class="nav-tab active" onclick="switchTab('visual', this)">
+        <svg viewBox="0 0 20 20" fill="currentColor"><path d="M4 3h12a1 1 0 011 1v12a1 1 0 01-1 1H4a1 1 0 01-1-1V4a1 1 0 011-1zm1 5v6h10V8H5zm0-3v2h10V5H5z"/></svg>
+        Visual Guide
+      </button>
+      <button class="nav-tab" onclick="switchTab('text', this)">
+        <svg viewBox="0 0 20 20" fill="currentColor"><path d="M3 4h14v2H3V4zm0 4h14v2H3V8zm0 4h10v2H3v-2z"/></svg>
+        Text Directions
+      </button>
+      <button class="nav-tab" onclick="switchTab('both', this)">
+        <svg viewBox="0 0 20 20" fill="currentColor"><path d="M2 3h7v8H2V3zm9 0h7v4h-7V3zm0 6h7v4h-7V9zM2 13h16v4H2v-4z"/></svg>
+        Both
+      </button>
+    </div>
+
+    <!-- VISUAL TAB -->
+    <div id="tab-visual" class="tab-panel active">
+
+      <div class="nav-progress-wrap">
+        <!-- FIX: width set by JS below, not inline EJS style -->
+        <div class="nav-progress-fill" id="progressBar"></div>
+      </div>
+
+      <div class="slideshow-wrap">
+        <% steps.forEach(function(step, i) { %>
+        <div class="slide <%= i === 0 ? 'active' : '' %>">
+          <div class="slide-badge"><%= step.step %> / <%= steps.length %></div>
+          <div class="slide-img-wrap">
+            <img src="<%= step.photo %>" alt="<%= step.location %>" class="slide-img"
+                 onerror="this.src='/images/placeholder.jpg'; this.classList.add('placeholder')"/>
+            <div class="slide-img-overlay"></div>
+          </div>
+          <div class="slide-body">
+            <div class="slide-location">
+              <svg viewBox="0 0 20 20" fill="currentColor" width="16" height="16"><path d="M10 2C6.686 2 4 4.686 4 8c0 5.25 6 10 6 10s6-4.75 6-10c0-3.314-2.686-6-6-6zm0 8.5A2.5 2.5 0 1110 5.5 2.5 2.5 0 0110 10.5z"/></svg>
+              <%= step.location %>
+            </div>
+            <% if (step.isLast) { %>
+              <div class="slide-direction arrived">
+                <svg viewBox="0 0 20 20" fill="currentColor" width="18" height="18"><path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg>
+                You have arrived at your destination!
+              </div>
+            <% } else { %>
+              <div class="slide-direction">
+                <svg viewBox="0 0 20 20" fill="currentColor" width="18" height="18"><path d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z"/></svg>
+                <%= step.direction %>
+              </div>
+              <% if (steps[i+1]) { %>
+                <div class="slide-next-label">Next: <strong><%= steps[i+1].location %></strong></div>
+              <% } %>
+            <% } %>
+          </div>
+        </div>
+        <% }); %>
+      </div>
+
+      <div class="slide-controls">
+        <button class="slide-btn" id="prevBtn" onclick="changeSlide(-1)" disabled>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M15 18l-6-6 6-6"/></svg>
+          Prev
+        </button>
+        <div class="slide-dots" id="slideDots">
+          <% steps.forEach(function(s, i) { %>
+            <span class="dot <%= i === 0 ? 'active' : '' %>" onclick="goToSlide(<%= i %>)"></span>
+          <% }); %>
+        </div>
+        <button class="slide-btn" id="nextBtn" onclick="changeSlide(1)"
+          <% if (steps.length <= 1) { %>disabled<% } %>>
+          Next
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg>
+        </button>
+      </div>
+
+      <div class="thumb-strip">
+        <% steps.forEach(function(step, i) { %>
+        <div class="thumb <%= i === 0 ? 'active' : '' %>" onclick="goToSlide(<%= i %>)">
+          <img src="<%= step.photo %>" alt="<%= step.location %>"
+               onerror="this.src='/images/placeholder.jpg'"/>
+          <span><%= step.location %></span>
+        </div>
+        <% }); %>
+      </div>
+    </div>
+
+    <!-- TEXT TAB -->
+    <div id="tab-text" class="tab-panel">
+      <div class="text-directions">
+        <div class="text-dir-header">
+          <h3>Turn-by-turn directions</h3>
+          <button class="copy-btn" onclick="copyDirections()">
+            <svg viewBox="0 0 20 20" fill="currentColor" width="14"><path d="M8 2a2 2 0 00-2 2H4a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2a2 2 0 002-2V6a2 2 0 00-2-2h-2a2 2 0 00-2-2H8zm0 2h4v1H8V4zM4 8h8v8H4V8z"/></svg>
+            Copy
+          </button>
+        </div>
+        <ol class="text-steps">
+          <% steps.forEach(function(step, i) { %>
+          <li class="text-step">
+            <div class="text-step-num"><%= i + 1 %></div>
+            <div class="text-step-body">
+              <div class="text-step-loc"><%= step.location %></div>
+              <% if (step.isLast) { %>
+                <div class="text-step-dir arrived">You have arrived!</div>
+              <% } else { %>
+                <div class="text-step-dir"><%= step.direction %></div>
+              <% } %>
+            </div>
+            <% if (!step.isLast) { %>
+              <div class="text-step-connector"></div>
+            <% } %>
+          </li>
+          <% }); %>
+        </ol>
+      </div>
+    </div>
+
+    <!-- BOTH TAB -->
+    <div id="tab-both" class="tab-panel">
+      <div class="both-layout">
+
+        <div class="both-text">
+          <h4>Directions</h4>
+          <ol class="both-steps">
+            <% steps.forEach(function(step, i) { %>
+            <li class="both-step <%= i === 0 ? 'active-step' : '' %>" id="both-step-<%= i %>">
+              <span class="both-num"><%= i + 1 %></span>
+              <div>
+                <div class="both-loc"><%= step.location %></div>
+                <% if (step.isLast) { %>
+                  <div class="both-dir arrived">You have arrived!</div>
+                <% } else { %>
+                  <div class="both-dir"><%= step.direction %></div>
+                <% } %>
+              </div>
+            </li>
+            <% }); %>
+          </ol>
+        </div>
+
+        <div class="both-visual">
+          <div class="both-progress-wrap">
+            <!-- FIX: width set by JS below -->
+            <div class="both-progress-fill" id="bothProgressBar"></div>
+          </div>
+          <div class="slideshow-wrap mini">
+            <% steps.forEach(function(step, i) { %>
+            <div class="slide <%= i === 0 ? 'active' : '' %>">
+              <div class="slide-badge"><%= step.step %> / <%= steps.length %></div>
+              <img src="<%= step.photo %>" alt="<%= step.location %>" class="slide-img"
+                   onerror="this.src='/images/placeholder.jpg'"/>
+              <div class="slide-body">
+                <div class="slide-location"><%= step.location %></div>
+                <% if (step.isLast) { %>
+                  <div class="slide-direction arrived">You have arrived!</div>
+                <% } else { %>
+                  <div class="slide-direction"><%= step.direction %></div>
+                <% } %>
+              </div>
+            </div>
+            <% }); %>
+          </div>
+          <div class="slide-controls compact">
+            <button class="slide-btn" id="bothPrevBtn" onclick="changeBothSlide(-1)" disabled>
+              &larr; Prev
+            </button>
+            <span id="bothCounter">1 / <%= steps.length %></span>
+            <button class="slide-btn" id="bothNextBtn" onclick="changeBothSlide(1)"
+              <% if (steps.length <= 1) { %>disabled<% } %>>
+              Next &rarr;
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <% } else if (start && goal) { %>
+  <div class="nav-no-route">
+    <div class="nav-no-route-icon">&#9888;</div>
+    <h3>No route found</h3>
+    <p>No path between "<strong><%= start %></strong>" and "<strong><%= goal %></strong>".</p>
+  </div>
+  <% } %>
+
+</div>
+
+<script>
+// ── Read total steps from data attribute (fixes EJS-in-JS linting errors) ──
+var navResults = document.getElementById('navResults');
+var TOTAL      = navResults ? parseInt(navResults.getAttribute('data-total'), 10) : 0;
+
+// ── Set initial progress bar widths via JS ──
+var progressBar    = document.getElementById('progressBar');
+var bothProgressEl = document.getElementById('bothProgressBar');
+
+if (progressBar && TOTAL > 0) {
+  progressBar.style.width = Math.round((1 / TOTAL) * 100) + '%';
+}
+if (bothProgressEl && TOTAL > 0) {
+  bothProgressEl.style.width = Math.round((1 / TOTAL) * 100) + '%';
+}
+
+// ── State ──
+var currentSlide = 0;
+var bothSlide    = 0;
+var mainSlides   = document.querySelectorAll('#tab-visual .slide');
+var miniSlides   = document.querySelectorAll('#tab-both .slideshow-wrap.mini .slide');
+var thumbs       = document.querySelectorAll('.thumb-strip .thumb');
+var dots         = document.querySelectorAll('.dot');
+
+// ── Main slideshow ──
+function changeSlide(dir) {
+  goToSlide(currentSlide + dir);
+}
+
+function goToSlide(index) {
+  if (!TOTAL) return;
+
+  mainSlides[currentSlide].classList.remove('active');
+  if (thumbs[currentSlide]) thumbs[currentSlide].classList.remove('active');
+  if (dots[currentSlide])   dots[currentSlide].classList.remove('active');
+
+  currentSlide = Math.max(0, Math.min(index, TOTAL - 1));
+
+  mainSlides[currentSlide].classList.add('active');
+  if (thumbs[currentSlide]) {
+    thumbs[currentSlide].classList.add('active');
+    thumbs[currentSlide].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+  }
+  if (dots[currentSlide]) dots[currentSlide].classList.add('active');
+
+  if (progressBar) {
+    progressBar.style.width = Math.round(((currentSlide + 1) / TOTAL) * 100) + '%';
+  }
+
+  document.getElementById('prevBtn').disabled = currentSlide === 0;
+  document.getElementById('nextBtn').disabled = currentSlide === TOTAL - 1;
+}
+
+// ── Both-tab slideshow ──
+function changeBothSlide(dir) {
+  if (!TOTAL) return;
+
+  miniSlides[bothSlide].classList.remove('active');
+  var prevStep = document.querySelectorAll('.both-step')[bothSlide];
+  if (prevStep) prevStep.classList.remove('active-step');
+
+  bothSlide = Math.max(0, Math.min(bothSlide + dir, TOTAL - 1));
+
+  miniSlides[bothSlide].classList.add('active');
+  var activeStep = document.querySelectorAll('.both-step')[bothSlide];
+  if (activeStep) {
+    activeStep.classList.add('active-step');
+    activeStep.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
+  if (bothProgressEl) {
+    bothProgressEl.style.width = Math.round(((bothSlide + 1) / TOTAL) * 100) + '%';
+  }
+
+  document.getElementById('bothCounter').textContent = (bothSlide + 1) + ' / ' + TOTAL;
+  document.getElementById('bothPrevBtn').disabled = bothSlide === 0;
+  document.getElementById('bothNextBtn').disabled = bothSlide === TOTAL - 1;
+}
+
+// Clicking a step in Both tab
+document.querySelectorAll('.both-step').forEach(function(el, i) {
+  el.addEventListener('click', function() {
+    miniSlides[bothSlide].classList.remove('active');
+    var prev = document.querySelectorAll('.both-step')[bothSlide];
+    if (prev) prev.classList.remove('active-step');
+
+    bothSlide = i;
+    miniSlides[bothSlide].classList.add('active');
+    el.classList.add('active-step');
+
+    if (bothProgressEl) {
+      bothProgressEl.style.width = Math.round(((bothSlide + 1) / TOTAL) * 100) + '%';
+    }
+    document.getElementById('bothCounter').textContent = (bothSlide + 1) + ' / ' + TOTAL;
+    document.getElementById('bothPrevBtn').disabled = bothSlide === 0;
+    document.getElementById('bothNextBtn').disabled = bothSlide === TOTAL - 1;
+  });
+});
+
+// ── Tab switcher ──
+function switchTab(tab, btn) {
+  document.querySelectorAll('.nav-tab').forEach(function(b) { b.classList.remove('active'); });
+  document.querySelectorAll('.tab-panel').forEach(function(p) { p.classList.remove('active'); });
+  btn.classList.add('active');
+  document.getElementById('tab-' + tab).classList.add('active');
+}
+
+// ── Swap start/goal ──
+function swapLocations() {
+  var s   = document.querySelector('select[name="start"]');
+  var g   = document.querySelector('select[name="goal"]');
+  var tmp = s.value;
+  s.value = g.value;
+  g.value = tmp;
+}
+
+// ── Copy directions ──
+function copyDirections() {
+  var items  = document.querySelectorAll('.text-step');
+  var fromEl = document.querySelector('.nav-route-from');
+  var toEl   = document.querySelector('.nav-route-to');
+  var text   = 'JIIT Campus Directions\n';
+  text += (fromEl ? fromEl.textContent : '') + ' to ' + (toEl ? toEl.textContent : '') + '\n\n';
+
+  items.forEach(function(el, i) {
+    var loc = el.querySelector('.text-step-loc') ? el.querySelector('.text-step-loc').textContent : '';
+    var dir = el.querySelector('.text-step-dir') ? el.querySelector('.text-step-dir').textContent : '';
+    text += (i + 1) + '. ' + loc + '\n   ' + dir + '\n\n';
+  });
+
+  navigator.clipboard.writeText(text).then(function() {
+    var btn = document.querySelector('.copy-btn');
+    btn.textContent = 'Copied!';
+    setTimeout(function() { btn.textContent = 'Copy'; }, 2000);
+  });
+}
+
+// ── Keyboard navigation ──
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'ArrowRight') changeSlide(1);
+  if (e.key === 'ArrowLeft')  changeSlide(-1);
+});
+
+// ── Auto scroll to results ──
+var results = document.getElementById('navResults');
+if (results) results.scrollIntoView({ behavior: 'smooth', block: 'start' });
+</script>
+
+<%- include('partials/footer') %>
