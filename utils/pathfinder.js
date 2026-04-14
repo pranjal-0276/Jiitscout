@@ -1,6 +1,6 @@
 // utils/pathfinder.js
 
-const graph = require('data\campusGraph.js');
+const graph = require('../data/campusGraph.js')
 
 /**
  * BFS — returns shortest path as array of location names
@@ -18,7 +18,11 @@ function findPath(start, goal) {
     if (visited.has(current)) continue;
     visited.add(current);
 
-    for (const { node } of graph[current].neighbors) {
+    // Skip malformed graph entries instead of crashing navigation.
+    const currentNode = graph[current];
+    if (!currentNode || !Array.isArray(currentNode.neighbors)) continue;
+
+    for (const { node } of currentNode.neighbors) {
       if (!visited.has(node)) {
         queue.push([node, [...path, node]]);
       }

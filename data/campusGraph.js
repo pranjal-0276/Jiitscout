@@ -4,22 +4,21 @@
 
 const graph = {
   "OAT": {
-    photo: "/images/nav/OAT.jpg",
+    photo: "/images/nav/OAT.jpeg",
     neighbors: [
       { node: "ABB 1",    direction: "Walk straight towards right", distance: 30 },
-      { node: "Cafeteria",   direction: "walk straight to left",        distance: 30  }
+      { node: "cafeteria",   direction: "walk straight to left",        distance: 30  }
     ]
   },
   "cafeteria": {
-    photo: "/images/nav/parking.jpg",
+    photo: "/images/nav/abb1-court.jpeg",
     neighbors: [
-      { node: "Admission Cell",      direction: "take a left than take left again",   distance: 60 },
       { node: "OAT",    direction: "take left than walk straight",          distance: 30},
       { node: "ABB 1", direction: " take a left then walk straight past the ground ", distance: 40},
     ]
   },
   "ABB 1": {
-    photo: "/images/nav/ABB1.jpg",
+    photo: "/images/nav/ABB1.jpeg",
     neighbors: [
       { node: "cafeteria",      direction: "Walk straight past the ground",         distance: 40},
       { node: "OAT",        direction: "walk straight on the road along ABB1 , then take left",        distance: 30}

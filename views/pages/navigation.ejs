@@ -1,4 +1,5 @@
-<%- include('partials/header') %>
+<% layout("./layouts/stuff.ejs"); %>
+
 
 <div class="nav-page">
 
@@ -23,7 +24,7 @@
       <h1 class="nav-hero-title">Campus Navigator</h1>
       <p class="nav-hero-sub">Find your way around JIIT with step-by-step visual directions</p>
 
-      <form class="nav-search-form" action="/navigate" method="GET">
+      <form class="nav-search-form" action="/jiitscout/navigate" method="GET">
         <div class="nav-inputs">
 
           <div class="nav-input-wrap">
@@ -121,7 +122,7 @@
           <div class="slide-badge"><%= step.step %> / <%= steps.length %></div>
           <div class="slide-img-wrap">
             <img src="<%= step.photo %>" alt="<%= step.location %>" class="slide-img"
-                 onerror="this.src='/images/placeholder.jpg'; this.classList.add('placeholder')"/>
+                 onerror="this.src='/images/icon.png'; this.classList.add('placeholder')"/>
             <div class="slide-img-overlay"></div>
           </div>
           <div class="slide-body">
@@ -169,7 +170,7 @@
         <% steps.forEach(function(step, i) { %>
         <div class="thumb <%= i === 0 ? 'active' : '' %>" onclick="goToSlide(<%= i %>)">
           <img src="<%= step.photo %>" alt="<%= step.location %>"
-               onerror="this.src='/images/placeholder.jpg'"/>
+               onerror="this.src='/images/icon.png'; this.classList.add('placeholder')"/>
           <span><%= step.location %></span>
         </div>
         <% }); %>
@@ -240,7 +241,7 @@
             <div class="slide <%= i === 0 ? 'active' : '' %>">
               <div class="slide-badge"><%= step.step %> / <%= steps.length %></div>
               <img src="<%= step.photo %>" alt="<%= step.location %>" class="slide-img"
-                   onerror="this.src='/images/placeholder.jpg'"/>
+                   onerror="this.src='/images/icon.png'; this.classList.add('placeholder')"/>
               <div class="slide-body">
                 <div class="slide-location"><%= step.location %></div>
                 <% if (step.isLast) { %>
@@ -427,4 +428,4 @@ var results = document.getElementById('navResults');
 if (results) results.scrollIntoView({ behavior: 'smooth', block: 'start' });
 </script>
 
-<%- include('partials/footer') %>
+
